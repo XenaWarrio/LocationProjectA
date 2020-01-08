@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">A-app</string>
+    <string name="emailHint">Email</string>
+    <string name="passwordHint">Password</string>
+    <string name="buttonLogin">login</string>
+    <string name="buttonSignIn">sign in</string>
+    <string name="textViewRegister">Not a member yet?</string>
+    <string name="textViewName">Enter your name: </string>
+    <string name="textViewEmail">Enter your email: </string>
+    <string name="textViewPassword">Enter your password:  </string>
+    <string name="nameHint">Chebyrek</string>
+    <string name="registerEmail">chebyrek@gmail.com</string>
+    <string name="registerPasswordHint">chebyrek12345</string>
+    <string name="bt_done">DONE</string>
+    <string name="bt_back">BACK</string>
+    <string name="empty_email">Email can`t be empty!</string>
+    <string name="dog_email">Where is "@"?</string>
+    <string name="little_email">Email can`t be so short!</string>
+    <string name="empty_password">Password can`t be empty!</string>
+    <string name="little_password">Password can`t be less than 7 characters!</string>
+    <string name="big_password">Password can`t be more than 15 characters!</string>
+
+</resources>
