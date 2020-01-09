@@ -21,7 +21,7 @@ import dx.queen.a_app.R;
 import dx.queen.a_app.code.presenter.PresenterRegistration;
 
 public class LoginFragment extends Fragment implements FragmentRegistrationContract.View {
-    PresenterRegistration presenter;
+    private PresenterRegistration presenter;
 
     private Unbinder unbinder;
 
@@ -49,7 +49,7 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new PresenterRegistration(this);
+        presenter = new PresenterRegistration();
         presenter.subscribe(this);
     }
 
@@ -118,6 +118,7 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
     @Override
     public void onDestroy() {
         unbinder.unbind();
+        presenter.unsubscribe();
         super.onDestroy();
     }
 

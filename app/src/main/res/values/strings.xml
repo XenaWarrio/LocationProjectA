@@ -20,4 +20,9 @@
     <string name="little_password">Password can`t be less than 7 characters!</string>
     <string name="big_password">Password can`t be more than 15 characters!</string>
 
+    <string name="provider_gps">GPS</string>
+    <string name="provider_wifi">Network</string>
+
+    <string name="spying">We are watching you</string>
+
 </resources>

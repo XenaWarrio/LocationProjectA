@@ -11,5 +11,6 @@ public abstract class MvpContract {
 
     public interface View {
 
+        void showToast(String toast);
     }
 }

@@ -6,8 +6,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import dx.queen.a_app.R;
+import dx.queen.a_app.code.view.gps_fragment.FragmentCallback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements FragmentCallback {
 
     private SignInFragment signInFragment;
     private LoginFragment loginFragment;
@@ -17,6 +18,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FragmentCallback fragmentCallback;
 
         signInFragment = new SignInFragment();
         loginFragment = new LoginFragment();
@@ -43,4 +46,8 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
+    @Override
+    public void onNameAdded(String name) {
+        // data or event
+    }
 }
