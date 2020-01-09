@@ -7,11 +7,13 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import dx.queen.a_app.R;
 import dx.queen.a_app.code.view.gps_fragment.FragmentCallback;
+import dx.queen.a_app.code.view.gps_fragment.LocationFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
 
     private SignInFragment signInFragment;
     private LoginFragment loginFragment;
+    private LocationFragment locationFragment;
 
 
     @Override
@@ -23,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
         signInFragment = new SignInFragment();
         loginFragment = new LoginFragment();
+        locationFragment = new LocationFragment();
 
 
         if (savedInstanceState == null) {
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
             transaction.replace(R.id.container, loginFragment);
 
         } else if (item == 3) {
-            //transaction.replace(R.id.container, fvistavki);
+            transaction.replace(R.id.container, locationFragment);
 
         }
         transaction.commit();

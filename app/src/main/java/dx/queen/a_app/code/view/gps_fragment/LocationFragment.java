@@ -30,5 +30,10 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
         Toast.makeText(getContext(), error ,Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void onDestroy() {
+        presenter.unsubscribe();
+        super.onDestroy();
+    }
 }
 

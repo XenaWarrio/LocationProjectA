@@ -36,7 +36,10 @@ public class SignInFragment extends Fragment {
 
     @OnClick(R.id.btn_signin)
     public void signIn(){
+
         emailAndPasswordValidation();
+
+        ((MainActivity) Objects.requireNonNull(getActivity())).onNavigationItemSelected(3);
     }
 
     @OnClick(R.id.btn_login)
