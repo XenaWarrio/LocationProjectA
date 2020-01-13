@@ -1,16 +1,17 @@
 package dx.queen.a_app.code.mvp;
 
-public class AbstractPresenter <T extends MvpContract.View> implements MvpContract.Presenter<T> {
-        protected T view;
+public class AbstractPresenter implements MvpContract.Presenter {
+    protected MvpContract.View view;
 
-        @Override
-        public void subscribe(T view) {
-            this.view = view;
-        }
+    @Override
+    public void subscribe(MvpContract.View view) {
+        this.view = view;
 
-        @Override
-        public void unsubscribe() {
-            view = null;
-        }
     }
+
+    @Override
+    public void unsubscribe() {
+        view = null;
+    }
+}
 

@@ -1,6 +1,6 @@
 package dx.queen.a_app.code.presenter;
 
-import android.app.Activity;
+import android.content.Context;
 
 import dx.queen.a_app.code.model.LocationTracking;
 import dx.queen.a_app.code.mvp.AbstractPresenter;
@@ -8,11 +8,15 @@ import dx.queen.a_app.code.view.gps_fragment.FragmentLocationContract;
 
 public class PresenterLocation extends AbstractPresenter implements FragmentLocationContract.Presenter {
 
-    LocationTracking model;
+    FragmentLocationContract.Model model;
+
+    public PresenterLocation(){
+        model = new LocationTracking();
+    }
 
     @Override
-    public void startLocationTracking(Activity activity) {
-        model.startTracking(activity);
+    public void startLocationTracking(Context context) {
+        model.startTracking(context);
     }
 
     @Override

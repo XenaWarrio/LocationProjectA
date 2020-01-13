@@ -3,13 +3,12 @@ package dx.queen.a_app.code.model.registration;
 import com.google.firebase.auth.FirebaseAuth;
 
 import dx.queen.a_app.code.presenter.PresenterRegistration;
+import dx.queen.a_app.code.view.FragmentRegistrationContract;
 
-public class Registration {
-    private PresenterRegistration presenter;
+public class Registration implements FragmentRegistrationContract.Model {
+    //FragmentRegistrationContract.Presenter presenter;
 
-    public Registration(PresenterRegistration presenter){
-        this.presenter = presenter;
-    }
+    PresenterRegistration presenter;
 
     public void newUser(String email , String password){
         FirebaseAuth auth = FirebaseAuth.getInstance();

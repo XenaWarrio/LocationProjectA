@@ -1,5 +1,6 @@
 package dx.queen.a_app.code.view;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,7 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
     private PresenterRegistration presenter;
 
     private Unbinder unbinder;
+    private FragmentCallback callback;
 
     @NonNull
     @BindView(R.id.et_emailR)
@@ -86,7 +88,7 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
 
     @Override
     public void switchToBaseFragment() {
-        ((MainActivity) Objects.requireNonNull(getActivity())).onNavigationItemSelected(1);
+        callback.nextFragment(1);
     }
 
     @Override
@@ -112,6 +114,18 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
     @Override
     public String getString(Integer resId) {
         return Objects.requireNonNull(getContext()).getString(resId);
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        callback = (FragmentCallback) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        callback = null;
     }
 
 

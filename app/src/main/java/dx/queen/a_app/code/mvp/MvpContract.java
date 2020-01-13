@@ -2,9 +2,9 @@ package dx.queen.a_app.code.mvp;
 
 public abstract class MvpContract {
 
-    public interface Presenter<T extends MvpContract.View> {
+    public interface Presenter {
 
-        void subscribe(T view);
+        void subscribe(MvpContract.View view);
 
         void unsubscribe();
     }
@@ -12,5 +12,7 @@ public abstract class MvpContract {
     public interface View {
 
         void showToast(String toast);
+
     }
+
 }

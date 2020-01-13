@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import dx.queen.a_app.R;
-import dx.queen.a_app.code.view.gps_fragment.FragmentCallback;
 import dx.queen.a_app.code.view.gps_fragment.LocationFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
@@ -21,19 +20,16 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentCallback fragmentCallback;
-
         signInFragment = new SignInFragment();
         loginFragment = new LoginFragment();
         locationFragment = new LocationFragment();
 
-
-        if (savedInstanceState == null) {
-            onNavigationItemSelected(1);
-        }
+        nextFragment(1);
     }
 
-    public void onNavigationItemSelected(int item) {
+
+    @Override
+    public void nextFragment(int item) {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
         if (item == 1) {
@@ -47,10 +43,5 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
 
         }
         transaction.commit();
-    }
-
-    @Override
-    public void onNameAdded(String name) {
-        // data or event
     }
 }

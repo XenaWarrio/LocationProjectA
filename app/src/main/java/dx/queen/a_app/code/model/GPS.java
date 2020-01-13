@@ -1,45 +1,52 @@
 package dx.queen.a_app.code.model;
 
-import java.text.DateFormat;
-import java.util.Date;
-
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity
+@Entity(tableName = "database")
 public class GPS {
 
+    @NonNull
+   @PrimaryKey
+    private String userId;
+
     private double lat, lon;
-    private Date date;
 
-    @PrimaryKey
-    private String lastUpdate;
-
-    public GPS(double latitude, double longitude) {
-        this.lat = latitude;
-        this.lon = longitude;
-        this.date = new Date();
-        this.lastUpdate = DateFormat.getTimeInstance().format(this.date);
+    public GPS(double lat, double lon, String userId) {
+        this.lat = lat;
+        this.lon = lon;
+        this.userId = userId;
     }
 
 
 
-    public double getLatitude() {
+
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public double getLat() {
         return lat;
     }
 
-    public Date getDate() {
-        return date;
+    public void setLat(double lat) {
+        this.lat = lat;
     }
 
-    public String getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public double getLongitude() {
+    public double getLon() {
         return lon;
     }
 
+    public void setLon(double lon) {
+        this.lon = lon;
+    }
 
 }
 

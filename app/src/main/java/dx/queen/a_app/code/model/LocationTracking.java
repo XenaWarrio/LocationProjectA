@@ -1,7 +1,7 @@
 package dx.queen.a_app.code.model;
 
 import android.Manifest;
-import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,29 +11,29 @@ import android.os.Bundle;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
-import dx.queen.a_app.code.model.db.GpsDao;
-import dx.queen.a_app.code.model.db.GpsDatabase;
-import dx.queen.a_app.code.model.db.OneDataBaseInstance;
-import dx.queen.a_app.code.presenter.PresenterLocation;
+import dx.queen.a_app.code.model.db.LoadToDb;
+import dx.queen.a_app.code.view.gps_fragment.FragmentLocationContract;
 
 import static android.content.Context.LOCATION_SERVICE;
 
-public class LocationTracking implements LocationListener {
+public class LocationTracking implements LocationListener, FragmentLocationContract.Model {
 
-    private static final int PERMISSIONS_REQUEST = 100;
+    //private static final int PERMISSIONS_REQUEST = 100;
+     FragmentLocationContract.Presenter presenter;
+    private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
+    //String id = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    final private PresenterLocation presenter = new PresenterLocation();
+    private String id = ref.push().getKey();
 
-    public void startTracking(Activity activity) {
-        LocationManager locationManager = (LocationManager) activity.getSystemService(LOCATION_SERVICE);// keep
+    public void startTracking(Context context) {
+        LocationManager locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);// keep
 
-        int permission = ContextCompat.checkSelfPermission(activity,
+        int permission = ContextCompat.checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION);
         if (permission == PackageManager.PERMISSION_GRANTED) {
 
@@ -42,7 +42,7 @@ public class LocationTracking implements LocationListener {
 
             Location location = locationManager.getLastKnownLocation("Gps");
 
-            GPS gps = new GPS(location.getLatitude(), location.getLongitude());
+            GPS gps = new GPS(location.getLatitude(), location.getLongitude(), id);
             loadToFirebase(gps);
 
             final boolean networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -51,16 +51,16 @@ public class LocationTracking implements LocationListener {
                 loadToDb(gps);
             }
         } else {
-
-            ActivityCompat.requestPermissions(activity,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST);
+//
+//            ActivityCompat.requestPermissions(MainActivity,
+//                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST);
         }
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
-        GPS gps = new GPS(location.getLatitude(), location.getLongitude());
+        GPS gps = new GPS(location.getLatitude(), location.getLongitude(), id);
         loadToFirebase(gps);
     }
 
@@ -76,9 +76,9 @@ public class LocationTracking implements LocationListener {
 
     @Override
     public void onProviderEnabled(String s) {
-        if(s.equals(LocationManager.NETWORK_PROVIDER)){
+        if (s.equals(LocationManager.NETWORK_PROVIDER)) {
             Constraints constraints = new Constraints.Builder()
-                    .setRequiredNetworkType (NetworkType.CONNECTED)
+                    .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build();
 
             OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(WorkM.class)
@@ -100,17 +100,12 @@ public class LocationTracking implements LocationListener {
 
     private void loadToFirebase(GPS gps) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
-        ref.setValue(gps);
+        ref.child(gps.getUserId()).setValue(gps);
 
     }
 
     private void loadToDb(GPS gps) {
-
-        GpsDatabase database = OneDataBaseInstance.getInstance().getDatabase();
-        GpsDao dao = database.gpsDao();
-
-        dao.insert(gps);
-
+        LoadToDb.loadToDB(gps);
     }
 
 

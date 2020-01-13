@@ -7,7 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import dx.queen.a_app.code.model.db.GpsDao;
 import dx.queen.a_app.code.model.db.GpsDatabase;
-import dx.queen.a_app.code.model.db.OneDataBaseInstance;
+
+import static dx.queen.a_app.code.model.db.GpsDatabase.getDatabase;
 
 public class WorkM extends Worker {
 
@@ -16,12 +17,12 @@ public class WorkM extends Worker {
     public WorkerResult doWork() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
 
-        GpsDatabase database = OneDataBaseInstance.getInstance().getDatabase();
+        GpsDatabase database = getDatabase();
         GpsDao dao = database.gpsDao();
 
 
         for (int i = 0; i <= dao.getAll().size(); i++) {
-            ref.setValue(dao.getAll().get(i));
+            ref.child(dao.getAll().get(i).getUserId()).setValue(dao.getAll().get(i));
             dao.delete(dao.getAll().get(i));
         }
 

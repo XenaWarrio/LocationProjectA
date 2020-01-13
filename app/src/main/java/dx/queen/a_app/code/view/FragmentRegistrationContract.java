@@ -6,17 +6,33 @@ public interface FragmentRegistrationContract {
 
     interface View extends MvpContract.View {
         void showToast(String message);
+
         void progressBarVisible(boolean visibility);
+
         void clearFields();
+
         void switchToBaseFragment();
+
         void addNewUser();
+
         void setEmailError(String error);
+
         void setPasswordError(String error);
+
         String getString(Integer resId);
     }
 
 
-    interface Presenter extends MvpContract.Presenter<View> {
+    interface Presenter extends MvpContract.Presenter {
         void createNewUser(String email, String password);
+
+        void taskSuccessful();
+
+        void taskFailed();
+
+    }
+
+    interface Model {
+        void newUser(String email, String password);
     }
 }

@@ -6,13 +6,18 @@ import dx.queen.a_app.code.mvp.AbstractPresenter;
 import dx.queen.a_app.code.util.TextUtils;
 import dx.queen.a_app.code.view.FragmentRegistrationContract;
 
-public class PresenterRegistration extends AbstractPresenter<FragmentRegistrationContract.View> implements FragmentRegistrationContract.Presenter {
+public class PresenterRegistration extends AbstractPresenter implements FragmentRegistrationContract.Presenter {
+
+    FragmentRegistrationContract.View view;
+    FragmentRegistrationContract.Model model;
+
+    public PresenterRegistration(){
+        model = new Registration();
+    }
 
 
     @Override
     public void createNewUser(String email, String password) {
-        Registration model = new Registration(this);
-
         isCorrectEmailPassword(email, password);
 
         model.newUser(email, password);
