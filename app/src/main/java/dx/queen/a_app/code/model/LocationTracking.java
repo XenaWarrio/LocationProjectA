@@ -8,9 +8,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
@@ -55,6 +59,7 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
 //            ActivityCompat.requestPermissions(MainActivity,
 //                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST);
         }
+
     }
 
 
@@ -98,10 +103,26 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
         }
     }
 
+
+
     private void loadToFirebase(GPS gps) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
         ref.child(gps.getUserId()).setValue(gps);
+        ref.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.exists()){
+                    }
+                    else{
+                        ref.child("location").setValue(gps);
+                    }
+                }
 
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
     }
 
     private void loadToDb(GPS gps) {

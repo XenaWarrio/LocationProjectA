@@ -11,7 +11,7 @@ import dx.queen.a_app.code.model.GPS;
 @Dao
 public interface GpsDao {
 
-    @Query("SELECT * FROM `database`")
+    @Query("SELECT * FROM location")
     List<GPS>getAll();
 
     @Insert
