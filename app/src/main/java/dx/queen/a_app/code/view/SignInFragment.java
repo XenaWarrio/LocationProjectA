@@ -1,6 +1,5 @@
 package dx.queen.a_app.code.view;
 
-import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,8 +19,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import dx.queen.a_app.R;
-import pub.devrel.easypermissions.AfterPermissionGranted;
-import pub.devrel.easypermissions.EasyPermissions;
 
 public class SignInFragment extends Fragment  {
 
@@ -60,7 +57,6 @@ public class SignInFragment extends Fragment  {
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.signin, container, false);
         unbinder = ButterKnife.bind(this, v);
-        requestLocationPermission();
         return v;
 
     }
@@ -92,22 +88,6 @@ public class SignInFragment extends Fragment  {
 
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
-    }
-
-    @AfterPermissionGranted(REQUEST_LOCATION_PERMISSION)
-    public void requestLocationPermission() {
-        String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION };
-        if(EasyPermissions.hasPermissions(getActivity(), perms)) {
-            Toast.makeText(getContext(), "Permission already granted", Toast.LENGTH_SHORT).show();
-        }
-        else {
-            EasyPermissions.requestPermissions(this, "Please grant the location permission", REQUEST_LOCATION_PERMISSION, perms);
-        }
-    }
 
 
     @Override
