@@ -22,11 +22,6 @@ import dx.queen.a_app.R;
 import dx.queen.a_app.code.presenter.PresenterRegistration;
 
 public class LoginFragment extends Fragment implements FragmentRegistrationContract.View {
-    private PresenterRegistration presenter;
-
-    private Unbinder unbinder;
-    private FragmentCallback callback;
-
     @NonNull
     @BindView(R.id.et_emailR)
     EditText email;
@@ -36,6 +31,9 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
     @NonNull
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
+    private PresenterRegistration presenter;
+    private Unbinder unbinder;
+    private FragmentCallback callback;
 
     @OnClick(R.id.bt_done)
     public void done() {
@@ -93,12 +91,31 @@ public class LoginFragment extends Fragment implements FragmentRegistrationContr
 
     @Override
     public void addNewUser() {
-        progressBarVisible(true);
+        String emailS = email.getText().toString();
+        String passwordS = password.getText().toString();
 
-        String emailString = email.getText().toString();
-        String passwordString = password.getText().toString();
+        if (emailS.isEmpty() && passwordS.isEmpty()) {
+            Toast.makeText(getContext(),"Fields must be filled", Toast.LENGTH_LONG).show();
+        } else if (passwordS.equals("test")) {
+            setPasswordError("Lёsha etot parol slishkom prost");
+        } else if (emailS.isEmpty()) {
+            setEmailError(getString(R.string.empty_email));
+        } else if (emailS.length() < 8) {
+            setEmailError(getString(R.string.little_email));
+        } else if (!emailS.contains("@")) {
+            setEmailError(getString(R.string.dog_email));
+        }else if (passwordS.isEmpty()) {
+            setPasswordError(getString(R.string.empty_password));
+        } else if (passwordS.length() < 7) {
+            setPasswordError(getString(R.string.little_password));
+        } else if (passwordS.length() > 15) {
+            setPasswordError(getString(R.string.big_password));
+        }else{
+            presenter.createNewUser(emailS, passwordS);
+            progressBarVisible(true);
+        }
 
-        presenter.createNewUser(emailString, passwordString);
+
     }
 
     @Override

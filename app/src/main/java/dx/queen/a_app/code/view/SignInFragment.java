@@ -41,7 +41,6 @@ public class SignInFragment extends Fragment  {
 
         emailAndPasswordValidation();
 
-        callback.nextFragment(3);
 
     }
 
@@ -69,23 +68,54 @@ public class SignInFragment extends Fragment  {
 
     private void emailAndPasswordValidation() {
 
-        String emailString = email.getText().toString();
-        String passwordString = password.getText().toString();
+        String emailS = email.getText().toString();
+        String passwordS = password.getText().toString();
 
         auth = FirebaseAuth.getInstance();
 
-        auth.signInWithEmailAndPassword(emailString, passwordString).addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                //Toast.makeText(getActivity(), "You have successfully sign in!", Toast.LENGTH_SHORT).show();
-            } else {
-                Log.d("TAG", "signInWithEmail:failure", task.getException());
-                Toast.makeText(getActivity(), "Authentication failed.",
-                        Toast.LENGTH_SHORT).show();
-            }
 
-        });
+        if (emailS.isEmpty() && passwordS.isEmpty()) {
+            Toast.makeText(getContext(),"Fields must be filled", Toast.LENGTH_LONG).show();
+        } else if (passwordS.equals("test")) {
+            setPasswordError("Lёsha etot parol slishkom prost");
+        } else if (emailS.isEmpty()) {
+            setEmailError(getString(R.string.empty_email));
+        } else if (emailS.length() < 8) {
+            setEmailError(getString(R.string.little_email));
+        } else if (!emailS.contains("@")) {
+            setEmailError(getString(R.string.dog_email));
+        }else if (passwordS.isEmpty()) {
+            setPasswordError(getString(R.string.empty_password));
+        } else if (passwordS.length() < 7) {
+            setPasswordError(getString(R.string.little_password));
+        } else if (passwordS.length() > 15) {
+            setPasswordError(getString(R.string.big_password));
+        }else{
+
+            auth.signInWithEmailAndPassword(emailS, passwordS).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    callback.nextFragment(3);
+                } else {
+                    Log.d("TAG", "signInWithEmail:failure", task.getException());
+                    Toast.makeText(getActivity(), "Authentication failed.",
+                            Toast.LENGTH_SHORT).show();
+                }
+
+            });
+        }
 
 
+
+
+
+    }
+
+    public void setEmailError(String error) {
+        email.setError(error);
+    }
+
+    public void setPasswordError(String error) {
+        password.setError(error);
     }
 
 
