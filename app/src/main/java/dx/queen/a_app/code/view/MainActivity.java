@@ -20,6 +20,36 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+//        if (ContextCompat.checkSelfPermission(MainActivity.this,
+//                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ){
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
+//                    Manifest.permission.ACCESS_FINE_LOCATION)){
+//                ActivityCompat.requestPermissions(MainActivity.this,
+//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//            }else{
+//                ActivityCompat.requestPermissions(MainActivity.this,
+//                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//            }
+//        }
+//    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//                                           int[] grantResults){
+//        switch (requestCode){
+//            case 1: {
+//                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+//                    if (ContextCompat.checkSelfPermission(MainActivity.this,
+//                            Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED){
+//                        Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+//                    }
+//                }else{
+//                    Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//            }
+//        }
+//    }
+
         signInFragment = new SignInFragment();
         loginFragment = new LoginFragment();
         locationFragment = new LocationFragment();
