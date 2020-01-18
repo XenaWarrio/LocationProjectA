@@ -62,8 +62,7 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                                            int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        switch (requestCode) {
-            case 1: {
+        if (requestCode == 1) {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (ContextCompat.checkSelfPermission(MainActivity.this,
                             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
@@ -72,10 +71,9 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
                 } else {
                     Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
                 }
-                return;
             }
         }
-    }
+
 
     @Override
     public void nextFragment(int item) {

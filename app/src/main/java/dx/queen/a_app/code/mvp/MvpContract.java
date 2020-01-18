@@ -13,6 +13,8 @@ public abstract class MvpContract {
 
         void showToast(String toast);
 
+
+
     }
 
 }

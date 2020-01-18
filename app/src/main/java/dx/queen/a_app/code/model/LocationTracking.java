@@ -15,8 +15,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Date;
+
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.OneTimeWorkRequest;
@@ -25,36 +26,60 @@ import dx.queen.a_app.code.model.db.LoadToDb;
 import dx.queen.a_app.code.view.gps_fragment.FragmentLocationContract;
 
 import static android.content.Context.LOCATION_SERVICE;
-import static androidx.core.location.LocationManagerCompat.isLocationEnabled;
+import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 public class LocationTracking implements LocationListener, FragmentLocationContract.Model {
 
+    FragmentLocationContract.Presenter presenter;
+    LocationManager locationManager;
     private Criteria criteria;
     private String bestProvider;
     private double latitude;
     private double longitude;
-    FragmentLocationContract.Presenter presenter;
-    LocationManager locationManager;
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
     private String id = ref.push().getKey();
 
-    public void startTracking(Context context) {
+
+    public void startTracking() {
+         criteria = new Criteria();
+
+        Context context = presenter.getContext();
         locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
 
-        getLocation(locationManager, context);
+        int permission = checkSelfPermission(context,
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
 
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    600000, 60, this);
+            locationManager.requestLocationUpdates(
+                    LocationManager.NETWORK_PROVIDER, 600000, 60, this);
+
+        }
+        //getLocation(locationManager, context);
+
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria,true));
+
+
+    }
+
+
+    public void removeUpdates() {
+        locationManager.removeUpdates(this);
     }
 
 
     @Override
     public void onLocationChanged(Location location) {
+        showLocation(location);
+
 
         //locationManager.removeUpdates(this);
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-
-        GPS gps = new GPS(latitude, longitude, id);
-        loadToFirebase(gps);
+//        latitude = location.getLatitude();
+//        longitude = location.getLongitude();
+//
+//        GPS gps = new GPS(latitude, longitude, id);
+//        loadToFirebase(gps);
     }
 
     @Override
@@ -69,6 +94,14 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
 
     @Override
     public void onProviderEnabled(String s) {
+        checkEnabled();
+        int permission = checkSelfPermission(presenter.getContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION);
+        if (permission == PackageManager.PERMISSION_GRANTED) {
+
+            showLocation(locationManager.getLastKnownLocation(s));
+
+
         if (s.equals(LocationManager.NETWORK_PROVIDER)) {
             Constraints constraints = new Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -79,18 +112,61 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
                     .build();
 
             WorkManager.getInstance().enqueue(myWorkRequest);
+
+       }
         }
     }
 
     @Override
     public void onProviderDisabled(String s) {
-        if (s.equals(LocationManager.GPS_PROVIDER)) {
-            presenter.makeToast(s + "DISABLED");
-        } else if (s.equals(LocationManager.NETWORK_PROVIDER)) {
-            presenter.makeToast(s + "DISABLED");
-        }
+        checkEnabled();
+
+//        if (s.equals(LocationManager.GPS_PROVIDER)) {
+//            presenter.makeToast(s + "DISABLED");
+//        } else if (s.equals(LocationManager.NETWORK_PROVIDER)) {
+//            presenter.makeToast(s + "DISABLED");
+//        }
     }
 
+    public void checkEnabled() {
+        presenter.checkEnebleGps(locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER));
+        presenter.checkEnebleNet(locationManager
+                .isProviderEnabled(LocationManager.NETWORK_PROVIDER));
+
+    }
+
+    private void showLocation(Location location) {
+        final boolean networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        GPS gps;
+
+        if (location == null)
+            return;
+        if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            presenter.showLocationGPS(latitude, longitude, new Date(
+                    location.getTime()));
+
+            gps = new GPS(latitude, longitude, id);
+            loadToFirebase(gps);
+            if (!networkEnabled) {
+                loadToDb(gps);
+            }
+        } else if (location.getProvider().equals(
+                LocationManager.NETWORK_PROVIDER)) {
+            latitude = location.getLatitude();
+            longitude = location.getLongitude();
+            presenter.showLocationNET(latitude, longitude, new Date(
+                    location.getTime()));
+
+
+            gps = new GPS(latitude, longitude, id);
+            loadToFirebase(gps);
+        }
+
+
+    }
 
     private void loadToFirebase(GPS gps) {
 
@@ -112,7 +188,7 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
             }
         });
 
-       // locationManager.removeUpdates(this);
+        // locationManager.removeUpdates(this);
 
     }
 
@@ -120,44 +196,41 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
         LoadToDb.loadToDB(gps);
     }
 
-    protected void getLocation(LocationManager locationManager, Context context) {
-        if (isLocationEnabled(locationManager)) {
-            criteria = new Criteria();
-            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true));
-            final boolean networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-
-            int permission = ContextCompat.checkSelfPermission(context,
-                    Manifest.permission.ACCESS_FINE_LOCATION);
-            if (permission == PackageManager.PERMISSION_GRANTED) {
-
-
-//                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 600000, 60, this);
-//                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 600000, 60, this);
+//    protected void getLocation(LocationManager locationManager, Context context) {
+//        if (isLocationEnabled(locationManager)) {
+//            criteria = new Criteria();
+//            bestProvider = String.valueOf(locationManager.getBestProvider(criteria, true));
+//            final boolean networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 //
+//
+//            int permission = checkSelfPermission(context,
+//                    Manifest.permission.ACCESS_FINE_LOCATION);
+//            if (permission == PackageManager.PERMISSION_GRANTED) {
+//
+//
+//                Location location = locationManager.getLastKnownLocation(bestProvider);
+//
+//                if (location != null) {
+//                    latitude = location.getLatitude();
+//                    longitude = location.getLongitude();
+//                } else {
+//                    locationManager.requestLocationUpdates(bestProvider, 600000, 60, this);
+//
+//                }
+//                GPS gps = new GPS(location.getLatitude(), location.getLongitude(), id);
+//
+//
+//                loadToFirebase(gps);
+//
+//
+//                if (!networkEnabled) {
+//                    loadToDb(gps);
+//                }
+//            }
+//        }
+//
+//
+//    }
 
-                Location location = locationManager.getLastKnownLocation(bestProvider);
 
-                if (location != null) {
-                    latitude = location.getLatitude();
-                    longitude = location.getLongitude();
-                } else {
-                    locationManager.requestLocationUpdates(bestProvider, 600000, 60, this);
-
-                }
-                    GPS gps = new GPS(location.getLatitude(), location.getLongitude(), id);
-
-
-                    loadToFirebase(gps);
-
-
-                    if (!networkEnabled) {
-                        loadToDb(gps);
-                    }
-                }
-            }
-
-
-        }
-
-    }
+}

@@ -110,11 +110,11 @@ public class SignInFragment extends Fragment  {
 
     }
 
-    public void setEmailError(String error) {
+    private void setEmailError(String error) {
         email.setError(error);
     }
 
-    public void setPasswordError(String error) {
+    private void setPasswordError(String error) {
         password.setError(error);
     }
 
