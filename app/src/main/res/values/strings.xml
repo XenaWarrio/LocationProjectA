@@ -23,7 +23,10 @@
     <string name="provider_gps">GPS</string>
     <string name="provider_network">Network</string>
     <string name="location_settings">Location settings</string>
-
+    <string name="netIsOn">internet is on</string>
+    <string name="netIsOff">internet is off</string>
+    <string name="gpsIsOn">gps is on</string>
+    <string name="gpsIsOff">gps is off</string>
 
 
 </resources>

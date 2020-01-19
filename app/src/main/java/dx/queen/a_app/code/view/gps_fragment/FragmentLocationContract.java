@@ -37,9 +37,10 @@ public interface FragmentLocationContract {
         Context getContext();
 
 
+
     }
     interface Model {
-        void startTracking();
+        void startTracking(Context context);
          void checkEnabled();
          void removeUpdates();
     }

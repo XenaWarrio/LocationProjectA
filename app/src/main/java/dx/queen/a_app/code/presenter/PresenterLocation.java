@@ -1,6 +1,7 @@
 package dx.queen.a_app.code.presenter;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -15,12 +16,13 @@ public class PresenterLocation extends AbstractPresenter implements FragmentLoca
 
     public PresenterLocation(FragmentLocationContract.View viewFragment){
         this.viewFragment = viewFragment;
-        model = new LocationTracking();
+        model = new LocationTracking(viewFragment.getContext(),this);
     }
 
     @Override
     public void startLocationTracking() {
-        model.startTracking();
+        model.startTracking(viewFragment.getContext());
+        Log.d("CONTEXTY", "presenter.startTracking" + String.valueOf(viewFragment.getContext()));
     }
 
     public void removeUpdates(){
@@ -44,7 +46,10 @@ public class PresenterLocation extends AbstractPresenter implements FragmentLoca
         viewFragment.showLocationGPS(lat,longt,time);
     }
     public void showLocationNET(double lat, double longt, Date time){
+        Log.d("CONTEXTY", "presenter show location net   " + lat + longt + time);
+
         viewFragment.showLocationNET(lat,longt,time);
+
 
 
     }
@@ -53,6 +58,8 @@ public class PresenterLocation extends AbstractPresenter implements FragmentLoca
     public Context getContext() {
         return viewFragment.getContext();
     }
+
+
 
     @Override
     public void makeToast(String error) {

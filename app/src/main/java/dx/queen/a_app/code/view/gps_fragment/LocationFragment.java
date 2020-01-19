@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,11 +21,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import dx.queen.a_app.R;
+import dx.queen.a_app.code.Mode;
 import dx.queen.a_app.code.presenter.PresenterLocation;
 
 public class LocationFragment extends Fragment implements FragmentLocationContract.View {
-
-    PresenterLocation presenter;
 
     @NonNull
     @BindView(R.id.tvenableGPS)
@@ -39,10 +39,9 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
     @BindView(R.id.tvlocationNET)
     TextView locationNet;
     @NonNull
-    @BindView(R.id.bt_settings)
-
-
+    @BindView(R.id.pb_main)
     ProgressBar progressBar;
+    private PresenterLocation presenter;
     private Unbinder unbinder;
 
     @OnClick(R.id.bt_settings)
@@ -67,6 +66,10 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //presenter.startLocationTracking(getActivity());
+        progressBarVisible(true);
+        presenter.startLocationTracking();
+        presenter.checkEnable();
+
 
     }
 
@@ -78,45 +81,62 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
 
     public void checkEnablegps(boolean enable) {
         if (enable) {
-            enableGps.setText("gps is on");
+            enableGps.setText(R.string.gpsIsOn);
         } else {
-            enableGps.setText("gps is off");
+            enableGps.setText(R.string.gpsIsOff);
 
         }
+
+        progressBarVisible(false);
     }
 
     public void checkEnablenet(boolean enable) {
         if (enable) {
-            enableGps.setText("internet is on");
+            enableNet.setText(R.string.netIsOn);
         } else {
-            enableGps.setText("internet is off");
+            enableNet.setText(R.string.netIsOff);
 
         }
+        progressBarVisible(false);
     }
 
 
-    public void showLocationGPS(double lat, double longt, Date time){
-        String location = String.format("Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
-                lat, longt,time);
-        locationGps.setText(location);
-
-    }
- public void showLocationNET(double lat, double longt, Date time){
-     String location = String.format("Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
-             lat, longt,time);
-     locationNet.setText(location);
+    public void showLocationGPS(double lat, double longt, Date time) {
+        locationGps.setText(String.format(Locale.US, "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
+                lat, longt, time));
+        progressBarVisible(false);
 
     }
 
-    public Context getContext(){
-        return getContext();
+    public void showLocationNET(double lat, double longt, Date time) {
+        locationNet.setText(String.format(Locale.US, "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
+                lat, longt, time));
+
+        progressBarVisible(false);
+
+    }
+
+    public Context getContext() {
+        return getActivity();
+    }
+
+
+
+    public void progressBarVisible(boolean visibility) {
+        if (visibility) {
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        presenter.startLocationTracking();
-        presenter.checkEnable();
+        Mode.setMODE(true);
+//        progressBarVisible(true);
+//        presenter.startLocationTracking();
+//        presenter.checkEnable();
     }
 
     @Override

@@ -1,7 +1,10 @@
 package dx.queen.a_app.code.model;
 
+import java.util.UUID;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "location")
@@ -13,10 +16,17 @@ public class GPS {
 
     private double lat, lon;
 
+    @Ignore
     public GPS(double lat, double lon, String userId) {
         this.lat = lat;
         this.lon = lon;
         this.userId = userId;
+    }
+
+    public GPS(double lat, double lon) {
+        this.lat = lat;
+        this.lon = lon;
+        this.userId = String.valueOf(UUID.randomUUID());
     }
 
 

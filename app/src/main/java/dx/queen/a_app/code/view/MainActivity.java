@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import dx.queen.a_app.R;
+import dx.queen.a_app.code.Mode;
 import dx.queen.a_app.code.view.gps_fragment.LocationFragment;
 
 public class MainActivity extends AppCompatActivity implements FragmentCallback {
@@ -54,7 +55,11 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         loginFragment = new LoginFragment();
         locationFragment = new LocationFragment();
 
-        nextFragment(1);
+        if(Mode.MODE){
+            nextFragment(3);
+        }else{
+            nextFragment(1);
+        }
     }
 
     @Override
@@ -91,4 +96,6 @@ public class MainActivity extends AppCompatActivity implements FragmentCallback 
         }
         transaction.commit();
     }
+
+
 }

@@ -30,21 +30,18 @@ import static androidx.core.content.ContextCompat.checkSelfPermission;
 
 public class LocationTracking implements LocationListener, FragmentLocationContract.Model {
 
-    FragmentLocationContract.Presenter presenter;
-    LocationManager locationManager;
-    private Criteria criteria;
-    private String bestProvider;
-    private double latitude;
-    private double longitude;
-    private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
-    private String id = ref.push().getKey();
+    private FragmentLocationContract.Presenter presenter;
+    private LocationManager locationManager;
 
 
-    public void startTracking() {
-         criteria = new Criteria();
+    public LocationTracking(Context context, FragmentLocationContract.Presenter presenter) {
+        this.locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+        this.presenter = presenter;
+    }
 
-        Context context = presenter.getContext();
-        locationManager = (LocationManager) context.getSystemService(LOCATION_SERVICE);
+
+    public void startTracking(Context context) {
+        final Criteria criteria = new Criteria();
 
         int permission = checkSelfPermission(context,
                 Manifest.permission.ACCESS_FINE_LOCATION);
@@ -56,9 +53,9 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
                     LocationManager.NETWORK_PROVIDER, 600000, 60, this);
 
         }
-        //getLocation(locationManager, context);
 
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria,true));
+        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+        showLocation(location);
 
 
     }
@@ -102,18 +99,18 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
             showLocation(locationManager.getLastKnownLocation(s));
 
 
-        if (s.equals(LocationManager.NETWORK_PROVIDER)) {
-            Constraints constraints = new Constraints.Builder()
-                    .setRequiredNetworkType(NetworkType.CONNECTED)
-                    .build();
+            if (s.equals(LocationManager.NETWORK_PROVIDER)) {
+                Constraints constraints = new Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.CONNECTED)
+                        .build();
 
-            OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(WorkM.class)
-                    .setConstraints(constraints)
-                    .build();
+                OneTimeWorkRequest myWorkRequest = new OneTimeWorkRequest.Builder(WorkM.class)
+                        .setConstraints(constraints)
+                        .build();
 
-            WorkManager.getInstance().enqueue(myWorkRequest);
+                WorkManager.getInstance().enqueue(myWorkRequest);
 
-       }
+            }
         }
     }
 
@@ -138,39 +135,45 @@ public class LocationTracking implements LocationListener, FragmentLocationContr
 
     private void showLocation(Location location) {
         final boolean networkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        GPS gps;
+        double latitude;
+        double longitude;
 
-        if (location == null)
+        if (location == null) {
+            presenter.makeToast("Location null");
             return;
+        }
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
+
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            presenter.showLocationGPS(latitude, longitude, new Date(
-                    location.getTime()));
+            presenter.showLocationGPS(latitude, longitude, new Date(location.getTime()));
 
-            gps = new GPS(latitude, longitude, id);
-            loadToFirebase(gps);
+            loadToFirebase(latitude, longitude);
+
             if (!networkEnabled) {
-                loadToDb(gps);
+                loadToDb(new GPS(latitude, longitude));
             }
-        } else if (location.getProvider().equals(
-                LocationManager.NETWORK_PROVIDER)) {
+        } else if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) {
+
             latitude = location.getLatitude();
             longitude = location.getLongitude();
-            presenter.showLocationNET(latitude, longitude, new Date(
-                    location.getTime()));
+
+            presenter.showLocationNET(latitude, longitude, new Date(location.getTime()));
 
 
-            gps = new GPS(latitude, longitude, id);
-            loadToFirebase(gps);
+            loadToFirebase(latitude, longitude);
         }
 
 
     }
 
-    private void loadToFirebase(GPS gps) {
+    private void loadToFirebase(double lat, double longt) {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("location");
+        String id = ref.push().getKey();
+
+        GPS gps = new GPS(lat, longt, id);
+
         ref.child(gps.getUserId()).setValue(gps);
         ref.addValueEventListener(new ValueEventListener() {
             @Override
