@@ -21,7 +21,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import dx.queen.a_app.R;
-import dx.queen.a_app.code.Mode;
 import dx.queen.a_app.code.presenter.PresenterLocation;
 
 public class LocationFragment extends Fragment implements FragmentLocationContract.View {
@@ -81,9 +80,9 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
 
     public void checkEnablegps(boolean enable) {
         if (enable) {
-            enableGps.setText(R.string.gpsIsOn);
+            enableGps.setText(getString(R.string.gpsIsOn));
         } else {
-            enableGps.setText(R.string.gpsIsOff);
+            enableGps.setText(getString(R.string.gpsIsOff));
 
         }
 
@@ -92,9 +91,9 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
 
     public void checkEnablenet(boolean enable) {
         if (enable) {
-            enableNet.setText(R.string.netIsOn);
+            enableNet.setText(getString(R.string.netIsOn));
         } else {
-            enableNet.setText(R.string.netIsOff);
+            enableNet.setText(getString(R.string.netIsOff));
 
         }
         progressBarVisible(false);
@@ -130,14 +129,6 @@ public class LocationFragment extends Fragment implements FragmentLocationContra
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Mode.setMODE(true);
-//        progressBarVisible(true);
-//        presenter.startLocationTracking();
-//        presenter.checkEnable();
-    }
 
     @Override
     public void onPause() {
